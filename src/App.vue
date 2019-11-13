@@ -1,31 +1,42 @@
 <template>
     <div id="app">
-        <div>
-            <span v-for="(selectedValue, key) in selectedValues" v-bind:key="key" style="margin-right: 10px" @click="removeSelectedValue(selectedValue)">
-                {{selectedValue}} <span>x</span>
-            </span>
-            <input v-if="actionType == 'search'" ref="input" @keyup="searchThisValue" @blur="blurInputField" @focus="showDropdownList" v-model="searchValue" style="margin-left: 10px;margin-right:10px;border: white;border-bottom: 1px solid;" type="text"/>
-            <font-awesome-icon v-if="!willDropdownListVisible" icon="sort-down" @click="showDropdownList" />
-            <font-awesome-icon v-if="willDropdownListVisible" icon="sort-up" @click="hideDropdownList"  />
+        <div class="wrapper">
+            <h4 class="title">MULTISELECT SEARCH DROPDOWN STATES</h4>
+            <div class="select-box">
+                <div class="select-box-container">
+                    <div class="select-box-label">Account category<span>*</span></div>
+                    <div class="select-box-input-container">
+                        <span class="selected-item" v-for="(selectedValue, key) in selectedValues" v-bind:key="key" @click="removeSelectedValue(selectedValue)">
+                            {{selectedValue}} <span class="clear-btn"><img src="assets/img/close.png"/></span>
+                        </span>
+                        <input class="select-box-input" v-if="actionType == 'search'" ref="input" @keyup="searchThisValue" @blur="blurInputField" @focus="showDropdownList" v-model="searchValue" placeholder="Type to search or choose from menu" type="text"/>
+                        <span v-if="!willDropdownListVisible" class="select-box-arrow down" @click="showDropdownList"></span>
+                        <span v-if="willDropdownListVisible" class="select-box-arrow up" @click="hideDropdownList"></span>
+                    </div>
+                </div>
+                <div>
+                    <span v-if="showError" style="margin-right: 10px;color: red">Please, select a valid account category</span>
+                    <span v-else class="help-text">E.g. makeup artist, marketing agency, etc.</span>
+                </div>
+                <div class="select-box-dropdown">
+                    <ul class="selected-cat" v-if="willSelectedValueVisible">
+                        <li v-for="(selectedValue, key) in selectedValues" v-bind:key="key" v-bind:style="{ 'padding-left': key*15 + 15 + 'px' }" @click="removeSelectedValue(selectedValue)">
+                            {{selectedValue}} <span class="select-box-checked-icon checked"><img src="assets/img/checked.png"/></span>
+                        </li>
+                    </ul>
+                    <ul class="cat-list" v-if="willDropdownListVisible" v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
+                        <li v-for="(dropdownList, key) in dropdownLists" v-bind:key="key"  @click="valueSelected(dropdownList.name)">
+                            {{dropdownList.name}} <span class="select-box-checked-icon unchecked"><img src="assets/img/unchecked.png"/></span>
+                        </li>
+                    </ul>
+                    <ul v-if="actionType == 'search' && nothingFound" v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
+                        <li>
+                            Oops, nothing found <span style="color: blue" @click="clearInput()">clear entry</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div v-if="showError">
-            <span style="margin-right: 10px;color: red">Please, select a valid account category</span>
-        </div>
-        <ul v-if="willSelectedValueVisible">
-            <li v-for="(selectedValue, key) in selectedValues" v-bind:key="key" v-bind:style="{ 'margin-left': key*20 + 'px' }" @click="removeSelectedValue(selectedValue)">
-                {{selectedValue}} <span icon="check-circle">O</span>
-            </li>
-        </ul>
-        <ul v-if="willDropdownListVisible" v-bind:style="{ 'margin-left': selectedValues.length*20 + 'px' }">
-            <li v-for="(dropdownList, key) in dropdownLists" v-bind:key="key"  @click="valueSelected(dropdownList.name)">
-                {{dropdownList.name}} <span icon="check-circle">O</span>
-            </li>
-        </ul>
-        <ul v-if="actionType == 'search' && nothingFound" v-bind:style="{ 'margin-left': selectedValues.length*20 + 'px' }">
-            <li>
-                Oops, nothing found <span style="color: blue" @click="clearInput()">clear entry</span>
-            </li>
-        </ul>
     </div>
 </template>
 
@@ -415,6 +426,7 @@
                 this.actionType = 'check';
                 this.showError = false;
                 this.nothingFound = false;
+                this.searchValue = '';
 
                 let currentDropdownList = _.filter(this.dropdownLists, (dropdownList) => {
                     return dropdownList.name === key;
@@ -521,6 +533,7 @@
     }
 </script>
 
-<style>
-
+<style lang="css">
+    @import './assets/fonts/fonts.css';
+    @import './assets/css/style.css';
 </style>

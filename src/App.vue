@@ -1,28 +1,526 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app">
+        <div>
+            <span v-for="(selectedValue, key) in selectedValues" v-bind:key="key" style="margin-right: 10px" @click="removeSelectedValue(selectedValue)">
+                {{selectedValue}} <span>x</span>
+            </span>
+            <input v-if="actionType == 'search'" ref="input" @keyup="searchThisValue" @blur="blurInputField" @focus="showDropdownList" v-model="searchValue" style="margin-left: 10px;margin-right:10px;border: white;border-bottom: 1px solid;" type="text"/>
+            <font-awesome-icon v-if="!willDropdownListVisible" icon="sort-down" @click="showDropdownList" />
+            <font-awesome-icon v-if="willDropdownListVisible" icon="sort-up" @click="hideDropdownList"  />
+        </div>
+        <div v-if="showError">
+            <span style="margin-right: 10px;color: red">Please, select a valid account category</span>
+        </div>
+        <ul v-if="willSelectedValueVisible">
+            <li v-for="(selectedValue, key) in selectedValues" v-bind:key="key" v-bind:style="{ 'margin-left': key*20 + 'px' }" @click="removeSelectedValue(selectedValue)">
+                {{selectedValue}} <span icon="check-circle">O</span>
+            </li>
+        </ul>
+        <ul v-if="willDropdownListVisible" v-bind:style="{ 'margin-left': selectedValues.length*20 + 'px' }">
+            <li v-for="(dropdownList, key) in dropdownLists" v-bind:key="key"  @click="valueSelected(dropdownList.name)">
+                {{dropdownList.name}} <span icon="check-circle">O</span>
+            </li>
+        </ul>
+        <ul v-if="actionType == 'search' && nothingFound" v-bind:style="{ 'margin-left': selectedValues.length*20 + 'px' }">
+            <li>
+                Oops, nothing found <span style="color: blue" @click="clearInput()">clear entry</span>
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+    import _ from 'lodash'; // eslint-disable-line
 
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
+    export default {
+        name: 'app',
+        data () {
+            return {
+                dataResults : [
+                    {
+                        name : 'Category 1',
+                        data : [
+                            {
+                                name : 'Sub Category 11 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 111',
+                                        data: []
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 112',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 113',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Sub Category 12 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 121',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 122',
+                                        data: []
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 123',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Sub Category 13 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 131',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 132',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 133',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Other',
+                                data : []
+                            }
+                        ]
+                    },
+                    {
+                        name : 'Category 2',
+                        data : [
+                            {
+                                name : 'Sub Category 21 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 211',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 212',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 213',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Sub Category 22 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 221',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 222',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 223',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Sub Category 23 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 231',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 232',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 233',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Other',
+                                data : []
+                            }
+                        ]
+                    },
+                    {
+                        name : 'Category 3',
+                        data : [
+                            {
+                                name : 'Sub Category 31 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 311',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 312',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 313',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Sub Category 32 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 321',
+                                        data: [
+                                           {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 322',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 323',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Sub Category 33 Item',
+                                data: [
+                                    {
+                                        name: 'Sub Sub Category 331',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 332',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sub Sub Category 333',
+                                        data: [
+                                            {
+                                                name : 'Other',
+                                                data : []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name : 'Other',
+                                        data : []
+                                    }
+                                ]
+                            },
+                            {
+                                name : 'Other',
+                                data : []
+                            }
+                        ]
+                    },
+                    {
+                        name : 'Other',
+                        data : []
+                    }
+                ],
+                dropdownLists : [],
+                selectedValues: [],
+                selectedTopArray: {},
+                lastValue: '',
+                actionType: 'search',
+                searchValue: '',
+                willDropdownListVisible: false,
+                willSelectedValueVisible: true,
+                allArray: {},
+                nothingFound: false,
+                showError: false
+            }
+        },
+        mounted () {
+            this.dropdownLists = this.dataResults;
+
+            this.flatten(this.dataResults);
+        },
+        methods: {
+            flatten(data) {
+                var that = this;
+                data.forEach(function (element){
+                    if(Array.isArray(element.data)) {
+                        that.$set(that.allArray, element.name, element);
+                        that.flatten(element.data);
+                    } else {
+                        that.$set(that.allArray, element.name, element);
+                    }
+                });
+            },
+            valueSelected (key) {
+                this.selectedValues.push(key);
+                this.lastValue = key;
+                this.actionType = 'check';
+                this.showError = false;
+                this.nothingFound = false;
+
+                let currentDropdownList = _.filter(this.dropdownLists, (dropdownList) => {
+                    return dropdownList.name === key;
+                });
+                this.dropdownLists = currentDropdownList[0].data;
+
+                this.$set(this.selectedTopArray, key, this.dropdownLists);
+
+                // If no data available in array hide selected values
+                if(key === 'Other' || this.dropdownLists.length === 0)
+                {
+                    this.willSelectedValueVisible = false;
+
+                }
+            },
+            removeSelectedValue (key) {
+
+                let searchedKey = _.findIndex(this.selectedValues, function(selectedValue) { return selectedValue == key; });
+                this.selectedValues = _.filter(this.selectedValues, (selectedValue, selectedValueKey) => {
+                    return selectedValueKey <= searchedKey;
+                });
+
+                let lastValueKey = this.selectedValues.slice(-1).pop();
+
+                // We Only remove element when it is last element
+                if(key === lastValueKey)
+                {
+                    this.selectedValues = _.filter(this.selectedValues, (selectedValue) => {
+                      return selectedValue != key;
+                    });
+
+                    let newLastValueKey = this.selectedValues.slice(-1).pop();
+
+                    // If no value in selected value then
+                    // Show all elements in list
+                    if(newLastValueKey === undefined)
+                    {
+                        this.dropdownLists = this.dataResults;
+                        this.actionType = 'search';
+                    } else {
+                        this.lastValue = lastValueKey;
+
+                        this.dropdownLists = this.selectedTopArray[newLastValueKey];
+                    }
+
+                    this.willSelectedValueVisible = true;
+                }
+            },
+            searchThisValue() {
+                let currentDropdownList = [];
+                this.actionType = 'search';
+                this.nothingFound = false;
+                this.showError = false;
+                var that = this;
+                _.forEach(this.allArray, function(allArrayValue) {
+                    if(allArrayValue.name.toLowerCase().includes(that.searchValue.toLowerCase()))
+                    {
+                        currentDropdownList.push(allArrayValue);
+                    }
+                });
+
+
+
+                if(currentDropdownList.length > 0)
+                {
+                    this.dropdownLists = currentDropdownList;
+                } else {
+                    this.dropdownLists = [];
+                    this.nothingFound = true;
+                }
+
+                if(this.searchValue == '') {
+                    this.dropdownLists = this.dataResults;
+                }
+
+                console.log(this.searchValue); // eslint-disable-line
+            },
+            showDropdownList () {
+                this.willDropdownListVisible = true;
+            },
+            hideDropdownList () {
+                if(this.selectedValues.length === 0)
+                {
+                    this.willDropdownListVisible = false;
+                } else {
+                    this.willDropdownListVisible = true;
+                }
+            },
+            blurInputField () {
+                if(this.searchValue != '')
+                {
+                    this.showError = true;
+                    this.nothingFound = false;
+                }else if(this.selectedValues.length === 0 && this.willDropdownListVisible)
+                {
+                    this.$nextTick(() => this.$refs.input.focus());
+                }
+            },
+            clearInput () {
+                this.searchValue = '';
+                this.searchThisValue();
+            }
+        }
+    }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

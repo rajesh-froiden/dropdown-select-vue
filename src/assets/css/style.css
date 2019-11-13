@@ -148,3 +148,6 @@ body{
     right: 15px;
     top: calc(50% - 8px);
 }
+.d-block{
+    display: block;
+}

@@ -16,7 +16,9 @@
                 </div>
                 <div>
                     <span v-if="showError" class="error">Please, select a valid account category</span>
-                    <span v-else class="help-text">E.g. makeup artist, marketing agency, etc.</span>
+                    <span v-else class="help-text">
+                        <span v-if="showHelpText">E.g. makeup artist, marketing agency, etc.</span>
+                    </span>
                 </div>
                 <div class="select-box-dropdown" :class="{ 'd-block' : willDropdownListVisible }">
                     <ul class="selected-cat" v-if="willSelectedValueVisible">
@@ -400,7 +402,8 @@
                 willSelectedValueVisible: true,
                 allArray: {},
                 nothingFound: false,
-                showError: false
+                showError: false,
+                showHelpText: true,
             }
         },
         mounted () {
@@ -439,6 +442,8 @@
                 if(key === 'Other' || this.dropdownLists.length === 0)
                 {
                     this.willSelectedValueVisible = false;
+                    this.willDropdownListVisible = false;
+                    this.showHelpText = false;
 
                 }
             },
@@ -473,6 +478,7 @@
                     }
 
                     this.willSelectedValueVisible = true;
+                    this.willDropdownListVisible = true;
                 }
             },
             searchThisValue() {
@@ -488,8 +494,6 @@
                     }
                 });
 
-
-
                 if(currentDropdownList.length > 0)
                 {
                     this.dropdownLists = currentDropdownList;
@@ -500,6 +504,7 @@
 
                 if(this.searchValue == '') {
                     this.dropdownLists = this.dataResults;
+                    this.showHelpText = true;
                 }
 
                 console.log(this.searchValue); // eslint-disable-line

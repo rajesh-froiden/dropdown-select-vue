@@ -3,7 +3,7 @@
         <div class="wrapper">
             <h4 class="title">MULTISELECT SEARCH DROPDOWN STATES</h4>
             <div class="select-box" :class="{ 'open' : willDropdownListVisible }">
-                <div class="select-box-container">
+                <div class="select-box-container" :class="{ 'error-container' : showError }">
                     <div class="select-box-label">Account category<span>*</span></div>
                     <div class="select-box-input-container">
                         <span class="selected-item" v-for="(selectedValue, key) in selectedValues" v-bind:key="key" @click="removeSelectedValue(selectedValue)">
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div>
-                    <span v-if="showError" style="margin-right: 10px;color: red">Please, select a valid account category</span>
+                    <span v-if="showError" class="error">Please, select a valid account category</span>
                     <span v-else class="help-text">E.g. makeup artist, marketing agency, etc.</span>
                 </div>
                 <div class="select-box-dropdown" :class="{ 'd-block' : willDropdownListVisible }">
@@ -29,9 +29,9 @@
                             {{dropdownList.name}} <span class="select-box-checked-icon unchecked"><img src="assets/img/unchecked.png"/></span>
                         </li>
                     </ul>
-                    <ul v-if="actionType == 'search' && nothingFound">
+                    <ul class="cat-search" v-if="actionType == 'search' && nothingFound">
                         <li v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
-                            Oops, nothing found <span style="color: blue" @click="clearInput()">clear entry</span>
+                            Oops, nothing found <span class="clear-result" @click="clearInput()">clear entry</span>
                         </li>
                     </ul>
                 </div>

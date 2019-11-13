@@ -156,3 +156,19 @@ body{
 .d-block{
     display: block;
 }
+.error{
+    line-height: 1.42;
+    color: #ef3f61;
+    padding: 0 15px;
+}
+.error-container{
+    border-color: #ef3f61;
+}
+.cat-search{
+    padding: 0;
+    margin: 0;
+}
+.clear-result{
+    color: #5c94fe;
+    float: right;
+}

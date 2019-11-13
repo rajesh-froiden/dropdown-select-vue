@@ -1,15 +1,15 @@
 <template>
-    <div id="app">
+    <div id="app" @click="selectBoxClicked($event)">
         <div class="wrapper">
             <h4 class="title">MULTISELECT SEARCH DROPDOWN STATES</h4>
-            <div class="select-box" :class="{ 'open' : willDropdownListVisible }">
+            <div class="select-box"  id="select-boxed" :class="{ 'open' : willDropdownListVisible }">
                 <div class="select-box-container" :class="{ 'error-container' : showError }">
                     <div class="select-box-label">Account category<span>*</span></div>
                     <div class="select-box-input-container">
                         <span class="selected-item" v-for="(selectedValue, key) in selectedValues" v-bind:key="key" @click="removeSelectedValue(selectedValue)">
                             {{selectedValue}} <span class="clear-btn"><img src="assets/img/close.png"/></span>
                         </span>
-                        <input class="select-box-input" v-if="actionType == 'search'" ref="input" @keyup="searchThisValue" @blur="blurInputField" @focus="showDropdownList" v-model="searchValue" placeholder="Type to search or choose from menu" type="text"/>
+                        <input class="select-box-input" v-if="actionType == 'search'" ref="input" @keyup="searchThisValue" @focus="showDropdownList" v-model="searchValue" placeholder="Type to search or choose from menu" type="text"/>
                         <span v-if="!willDropdownListVisible" class="select-box-arrow down" @click="showDropdownList"></span>
                         <span v-if="willDropdownListVisible" class="select-box-arrow up" @click="hideDropdownList"></span>
                     </div>
@@ -33,7 +33,7 @@
                     </ul>
                     <ul class="cat-search" v-if="actionType == 'search' && nothingFound">
                         <li v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
-                            Oops, nothing found <span class="clear-result" @click="clearInput()">clear entry</span>
+                            Oops, nothing found <span class="clear-result" id="clear-text">clear entry</span>
                         </li>
                     </ul>
                 </div>
@@ -524,19 +524,27 @@
                     this.showHelpText = false;
                 }
             },
-            blurInputField () {
-                if(this.searchValue != '')
+            selectBoxClicked (event) {
+                let targetId = event.target.id;
+                if(targetId == 'app' && this.searchValue == '' && this.selectedValues.length === 0)
+                {
+                    this.willDropdownListVisible = false;
+                    this.showHelpText = true;
+                }
+
+                if(targetId == 'app' && this.searchValue != '' && this.selectedValues.length === 0)
                 {
                     this.showError = true;
                     this.nothingFound = false;
-                }else if(this.selectedValues.length === 0 && this.willDropdownListVisible)
-                {
-                    this.$nextTick(() => this.$refs.input.focus());
                 }
-            },
-            clearInput () {
-                this.searchValue = '';
-                this.searchThisValue();
+
+                console.log(event); // eslint-disable-line
+
+                if(targetId == 'clear-text' && this.searchValue != '' && this.selectedValues.length === 0)
+                {
+                    this.searchValue = '';
+                    this.searchThisValue();
+                }
             }
         }
     }

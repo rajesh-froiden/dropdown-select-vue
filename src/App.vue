@@ -497,6 +497,7 @@
                 if(currentDropdownList.length > 0)
                 {
                     this.dropdownLists = currentDropdownList;
+                    this.willDropdownListVisible = true;
                 } else {
                     this.dropdownLists = [];
                     this.nothingFound = true;
@@ -505,6 +506,7 @@
                 if(this.searchValue == '') {
                     this.dropdownLists = this.dataResults;
                     this.showHelpText = true;
+                    this.willDropdownListVisible = true;
                 }
 
                 console.log(this.searchValue); // eslint-disable-line
@@ -516,8 +518,10 @@
                 if(this.selectedValues.length === 0)
                 {
                     this.willDropdownListVisible = false;
+                    this.showHelpText = true;
                 } else {
                     this.willDropdownListVisible = true;
+                    this.showHelpText = false;
                 }
             },
             blurInputField () {

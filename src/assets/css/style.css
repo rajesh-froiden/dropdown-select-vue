@@ -107,6 +107,10 @@ body{
 .select-box{
     position: relative;
 }
+.select-box.open{
+    box-shadow: 0 5px 25px rgba(42, 52, 61, 0.08);
+    border-radius: 6px;
+}
 .select-box-dropdown{
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
@@ -114,6 +118,7 @@ body{
     background-color: #ffffff;
     margin-top: -27px;
     position: relative;
+    display: none;
 }
 .select-box-dropdown ul.selected-cat {
     margin: 0;

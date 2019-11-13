@@ -2,7 +2,7 @@
     <div id="app">
         <div class="wrapper">
             <h4 class="title">MULTISELECT SEARCH DROPDOWN STATES</h4>
-            <div class="select-box">
+            <div class="select-box" :class="{ 'open' : willDropdownListVisible }">
                 <div class="select-box-container">
                     <div class="select-box-label">Account category<span>*</span></div>
                     <div class="select-box-input-container">
@@ -18,19 +18,19 @@
                     <span v-if="showError" style="margin-right: 10px;color: red">Please, select a valid account category</span>
                     <span v-else class="help-text">E.g. makeup artist, marketing agency, etc.</span>
                 </div>
-                <div class="select-box-dropdown">
+                <div class="select-box-dropdown" :class="{ 'd-block' : willDropdownListVisible }">
                     <ul class="selected-cat" v-if="willSelectedValueVisible">
                         <li v-for="(selectedValue, key) in selectedValues" v-bind:key="key" v-bind:style="{ 'padding-left': key*15 + 15 + 'px' }" @click="removeSelectedValue(selectedValue)">
                             {{selectedValue}} <span class="select-box-checked-icon checked"><img src="assets/img/checked.png"/></span>
                         </li>
                     </ul>
-                    <ul class="cat-list" v-if="willDropdownListVisible" v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
-                        <li v-for="(dropdownList, key) in dropdownLists" v-bind:key="key"  @click="valueSelected(dropdownList.name)">
+                    <ul class="cat-list" v-if="willDropdownListVisible">
+                        <li v-for="(dropdownList, key) in dropdownLists" v-bind:key="key"  @click="valueSelected(dropdownList.name)" v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
                             {{dropdownList.name}} <span class="select-box-checked-icon unchecked"><img src="assets/img/unchecked.png"/></span>
                         </li>
                     </ul>
-                    <ul v-if="actionType == 'search' && nothingFound" v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
-                        <li>
+                    <ul v-if="actionType == 'search' && nothingFound">
+                        <li v-bind:style="{ 'padding-left': selectedValues.length*15 + 15 + 'px' }">
                             Oops, nothing found <span style="color: blue" @click="clearInput()">clear entry</span>
                         </li>
                     </ul>

@@ -11,7 +11,9 @@ body{
     padding: 50px 0;
 }
 .title{
+    font-family: proxima_nova_ltsemibold;
     line-height: 1.5;
+    font-weight: 600;
 }
 .help-text{
     font-size: 12px;

@@ -21,6 +21,7 @@
                     </span>
                 </div>
                 <div class="select-box-dropdown" :class="{ 'd-block' : willDropdownListVisible }">
+                    <perfect-scrollbar>
                     <ul class="selected-cat" v-if="willSelectedValueVisible">
                         <li v-for="(selectedValue, key) in selectedValues" v-bind:key="key" v-bind:style="{ 'padding-left': key*15 + 15 + 'px' }" @click="removeSelectedValue(selectedValue)">
                             {{selectedValue}} <span class="select-box-checked-icon checked"><img src="assets/img/checked.png"/></span>
@@ -36,6 +37,7 @@
                             Oops, nothing found <span class="clear-result" id="clear-text">clear entry</span>
                         </li>
                     </ul>
+                    </perfect-scrollbar>
                 </div>
             </div>
         </div>
@@ -551,4 +553,7 @@
 <style lang="css">
     @import './assets/fonts/fonts.css';
     @import './assets/css/style.css';
+    .ps {
+        max-height: 300px;
+    }
 </style>

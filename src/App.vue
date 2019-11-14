@@ -1,6 +1,6 @@
 <template>
     <div id="app" @click="selectBoxClicked($event)">
-        <div class="wrapper">
+        <div class="wrapper" id="main-wrapper">
             <h4 class="title">MULTISELECT SEARCH DROPDOWN STATES</h4>
             <div class="select-box"  id="select-boxed" :class="{ 'open' : willDropdownListVisible }">
                 <div class="select-box-container" :class="{ 'error-container' : showError }">
@@ -526,19 +526,17 @@
             },
             selectBoxClicked (event) {
                 let targetId = event.target.id;
-                if(targetId == 'app' && this.searchValue == '' && this.selectedValues.length === 0)
+                if((targetId == 'app' || targetId == 'main-wrapper') && this.searchValue == '' && this.selectedValues.length === 0)
                 {
                     this.willDropdownListVisible = false;
                     this.showHelpText = true;
                 }
 
-                if(targetId == 'app' && this.searchValue != '' && this.selectedValues.length === 0)
+                if((targetId == 'app' || targetId == 'main-wrapper') && this.searchValue != '' && this.selectedValues.length === 0)
                 {
                     this.showError = true;
                     this.nothingFound = false;
                 }
-
-                console.log(event); // eslint-disable-line
 
                 if(targetId == 'clear-text' && this.searchValue != '' && this.selectedValues.length === 0)
                 {

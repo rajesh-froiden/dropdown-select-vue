@@ -62,6 +62,7 @@ body{
 .select-box-input{
     color: #2a363d;
     border: 0;
+    font-size: 16px;
 }
 .select-box-input:hover, .select-box-input:focus{
     outline: none;

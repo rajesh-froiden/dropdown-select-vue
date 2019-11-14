@@ -84,6 +84,9 @@ body{
     display: inline-block;
     margin-left: 3px;
 }
+.selected-item .clear-btn:hover{
+    cursor: pointer;
+}
 .select-box-input-container{
     position: relative;
 }
@@ -144,6 +147,9 @@ body{
     line-height: 1.5;
     color: #2a363d;
     position: relative;
+}
+.select-box-dropdown ul li:hover{
+    cursor: pointer;
 }
 
 .select-box-checked-icon{
